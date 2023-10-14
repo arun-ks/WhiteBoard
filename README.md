@@ -1,4 +1,4 @@
-# WhiteBoard
+# Text Only - White Board
 Collaborative text-only white board without the hassle of logins & tracking.
 
 The UI is similar to group-chat, and this allows multiple users to post their message which will be shown on all clients.
@@ -22,3 +22,6 @@ python app.py
 
 Open http://127.0.0.1:5000/ 
 
+## To Do
+- [ ] Add Like/Dislike on each message
+- [ ] Add ability to sort the messages based on (Likes - Dislike)
