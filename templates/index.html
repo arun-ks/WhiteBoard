@@ -1,153 +1,151 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Group Chat</title>
-    <style>
-/* Define the animation */
-@keyframes fallDown {
-    from {
-        transform: translateY(-50px); /* Start above the input box */
-        opacity: 0; /* Start invisible */
-    }
-    to {
-        transform: translateY(0); /* Rise up to normal position */
-        opacity: 1; /* Fade in */
-    }
-}
-
-.chat-log {
-    display: flex;
-    flex-direction: column;
-    max-height: calc(100vh - 80px); /* Adjust for the height of the input box */
-    overflow-y: auto;
-}
-
-.chat-bubble {
-    animation: fallDown 0.5s ease-in-out; /* Adjust animation duration as needed */
-    background-color: #DCF8C6;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    margin: 5px;
-    padding: 10px;
-    max-width: 70%;
-    opacity: 0; /* Start invisible */
-    transform: translateY(50px); /* Start below the input box */
-    animation-fill-mode: forwards; /* Keep the final state after animation */
-}
-
-        /* Align chat messages based on user */
-        .my-message {
-            align-self: flex-end;
-            background-color: #DCF8C6;
-        }
-
-        .other-message {
-            align-self: flex-start;
-            background-color: #E6E5E5;
-        }
-
-
-
-        /* User input box and send button style */
-        .user-input {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #F4F4F4;
-        }
-
-        .user-input input {
-            flex-grow: 1;
-            margin: 5px;
-            padding: 5px;
-        }
-
-        .user-input button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        /* Body style */
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        /* Customization for user names */
-        .username {
-            font-weight: bold;
-        }
-
-        /* Container for chat log and user input */
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            justify-content: space-between;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        /* Customization for user names */
-        .username {
-            font-weight: bold;
-        }
-
-        /* Responsive design for small screens */
-        @media (max-width: 768px) {
-            .container {
-                max-width: 100%;
+   <head>
+      <title>Group Chat</title>
+      <style>
+             /* Animation */
+             @keyframes fallDown {
+                from {
+                   transform: translateY(-50px);
+                   opacity: 0; /* Start invisible */
+                }
+                to {
+                   transform: translateY(0);
+                   opacity: 1; /* Fade in */
+                }
+             }
+             
+             .chat-log {
+                display: flex;
+                flex-direction: column;
+                max-height: calc(100vh - 80px);
+                overflow-y: auto;
+             }
+             
+             .chat-bubble {
+                animation: fallDown 0.5s ease-in-out;
+                background-color: #dcf8c6;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                margin: 5px;
                 padding: 10px;
-            }
-            .chat-bubble {
-                max-width: 90%;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="chat-log" id="chat-log"></div>
-        <div class="user-input">
+                max-width: 70%;
+                opacity: 0; /* Start invisible */
+                transform: translateY(50px);
+                animation-fill-mode: forwards;
+             }
+             
+             /* Align chat messages based on user */
+             .my-message {
+                align-self: flex-end;
+                background-color: #dcf8c6;
+             }
+             
+             .other-message {
+                align-self: flex-start;
+                background-color: #e6e5e5;
+             }
+             
+             /* User input box and send button style */
+             .user-input {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                background-color: #f4f4f4;
+             }
+             
+             .user-input input {
+                flex-grow: 1;
+                margin: 5px;
+                padding: 5px;
+             }
+             
+             .user-input button {
+                background-color: #4caf50;
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                border-radius: 5px;
+                cursor: pointer;
+             }
+             
+             /* Body style */
+             body {
+                font-family: Arial, sans-serif;
+             }
+             
+             .username {
+                font-weight: bold;
+             }
+             
+             /* Container for chat log and user input */
+             .container {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                justify-content: space-between;
+                max-width: 1000px;
+                margin: 0 auto;
+             }
+             
+             /* Customization for user names */
+             .username {
+                font-weight: bold;
+             }
+             
+             /* Responsive design for small screens */
+             @media (max-width: 768px) {
+                .container {
+                   max-width: 100%;
+                   padding: 10px;
+                }
+                .chat-bubble {
+                   max-width: 90%;
+                }
+             }
+
+      </style>
+   </head>
+   <body>
+      <div class="container">
+         <div class="chat-log" id="chat-log"></div>
+         <div class="user-input">
             <input id="message-input" type="text" placeholder="Type a message">
             <button id="send-button">Send</button>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-    <script>
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-        var chatLog = document.getElementById('chat-log');
-        var messageInput = document.getElementById('message-input');
-        var sendButton = document.getElementById('send-button');
-        
-        socket.on('message', function(data) {
-            var message = '<span class="username">' + data.user.substr(0,4) + ':</span> ' + data.text;
-            var div = document.createElement('div');
-            div.innerHTML = message;
-            div.classList.add('chat-bubble');
-            
-            // Determine if the message is from the current user (my-message)
-            if (data.user === socket.id) {
-                div.classList.add('my-message');
-            } else {
-                div.classList.add('other-message');
-            }
-            
-            chatLog.appendChild(div);
-        });
-        
-        sendButton.onclick = function() {
-            var message = messageInput.value;
-            socket.emit('message', message);
-            messageInput.value = '';
-        };
-    </script>
-</body>
+         </div>
+      </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+      <script>
+         var socket = io.connect('http://' + document.domain + ':' + location.port);
+         var chatLog = document.getElementById('chat-log');
+         var messageInput = document.getElementById('message-input');
+         var sendButton = document.getElementById('send-button');
+         
+         socket.on('message', function(data) {
+             var message = '<span class="username">' + data.user.substr(0,4) + ':</span> ' + data.text;
+             var div = document.createElement('div');
+             div.innerHTML = message;
+             div.classList.add('chat-bubble');
+             
+             // Determine if the message is from the current user (my-message)
+             if (data.user === socket.id) {
+                 div.classList.add('my-message');
+             } else {
+                 div.classList.add('other-message');
+             }
+             
+             chatLog.appendChild(div);
+         });
+         
+         sendButton.onclick = function() {
+             var message = messageInput.value;
+             socket.emit('message', message);
+             messageInput.value = '';
+         };
+      </script>
+   </body>
 </html>
